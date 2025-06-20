@@ -51,12 +51,10 @@ public class User {
     @Column(nullable = false)
     private Boolean verified = false;
 
-    // Role del usuario (CITIZEN, ADMIN, MODERATOR)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.CITIZEN;
 
-    // Ubicación del usuario (opcional)
     private Double lastLatitude;
     private Double lastLongitude;
 
@@ -67,11 +65,13 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // Relación con reportes
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL)
     private List<CrimeReport> reports = new ArrayList<>();
 
     // Relación con comentarios
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "notifications")
+    private List<Notifications> notificationsList = new ArrayList<>();
 }

@@ -4,6 +4,8 @@ package org.devquality.safetyauthservice.persistence.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "notifications")
 @Getter
@@ -15,8 +17,12 @@ public class Notifications {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private String id;
+    private Long id;
     private String title;
     private String body;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

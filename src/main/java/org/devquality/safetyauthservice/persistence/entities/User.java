@@ -72,6 +72,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "notifications")
-    private List<Notifications> notificationsList = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notificationsList = new ArrayList<>();
 }

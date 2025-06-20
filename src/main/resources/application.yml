@@ -1,16 +1,1 @@
-spring:
-  application:
-    name: safety-auth-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/users
-    username: Hexagonal
-    password: HexagonalSole89
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+

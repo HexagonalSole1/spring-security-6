@@ -1,6 +1,7 @@
 package org.devquality.safetyauthservice.security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.devquality.safetyauthservice.persistence.enums.UserRole;
 import org.devquality.safetyauthservice.security.exceptions.ExceptionAccessDeniedHandlerImpl;
 import org.devquality.safetyauthservice.security.exceptions.ExceptionAuthenticationEntryPointImpl;
 import org.devquality.safetyauthservice.security.filters.JWTVerifierFilter;
@@ -26,6 +27,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -35,7 +37,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JWTVerifierFilter jwtVerifierFilter;
-    private final UserDetailsServiceImpl userDetailsService; // Especifica la implementación exacta
+    private final UserDetailsServiceImpl userDetailsService;
     private final ExceptionAccessDeniedHandlerImpl accessDeniedHandler;
     private final ExceptionAuthenticationEntryPointImpl authenticationEntryPoint;
 
@@ -57,6 +59,11 @@ public class SecurityConfig {
     @Value("${app.security.cors.max-age}")
     private long maxAge;
 
+    // Constantes para roles
+    private static final String ROLE_ADMIN = "ROLE_" + UserRole.ADMIN.name();
+    private static final String ROLE_MODERATOR = "ROLE_" + UserRole.MODERATOR.name();
+    private static final String ROLE_CITIZEN = "ROLE_" + UserRole.CITIZEN.name();
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -70,12 +77,15 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(authorize -> authorize
                         // Public endpoints
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/actuator/info").permitAll()
-                        .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/actuator/health",
+                                "/actuator/info",
+                                "/favicon.ico",
+                                "/error"
+                        ).permitAll()
 
                         // Auth endpoints
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
@@ -83,16 +93,21 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/health").permitAll()
 
-                        // Admin endpoints
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        // Admin endpoints - Solo ADMIN
+                        .requestMatchers("/api/v1/admin/**").hasAuthority(ROLE_ADMIN)
 
-                        // Moderator endpoints
-                        .requestMatchers("/api/v1/moderator/**").hasAnyRole("MODERATOR", "ADMIN")
+                        // Moderator endpoints - MODERATOR y ADMIN
+                        .requestMatchers("/api/v1/moderator/**").hasAnyAuthority(ROLE_MODERATOR, ROLE_ADMIN)
 
-                        // User endpoints (require authentication)
-                        .requestMatchers("/api/v1/users/**").authenticated()
-                        .requestMatchers("/api/v1/auth/me").authenticated()
-                        .requestMatchers("/api/v1/auth/logout").authenticated()
+                        // User management endpoints con restricciones específicas
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasAnyAuthority(ROLE_MODERATOR, ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users/{id}/activate").hasAuthority(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users/{id}/deactivate").hasAuthority(ROLE_ADMIN)
+
+                        // User profile endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/profile").authenticated()
+                        .requestMatchers("/api/v1/auth/me", "/api/v1/auth/logout").authenticated()
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
@@ -103,7 +118,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12); // Increased strength
     }
 
     @Bean
@@ -111,6 +126,7 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setHideUserNotFoundExceptions(false); // Para debugging en dev
         return authProvider;
     }
 
@@ -122,10 +138,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
-        configuration.setAllowedMethods(List.of(allowedMethods.split(",")));
-        configuration.setAllowedHeaders(List.of(allowedHeaders.split(",")));
-        configuration.setExposedHeaders(List.of(exposedHeaders.split(",")));
+
+        // Parse allowed origins
+        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
+        configuration.setAllowedMethods(Arrays.asList(allowedMethods.split(",")));
+        configuration.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
+        configuration.setExposedHeaders(Arrays.asList(exposedHeaders.split(",")));
         configuration.setAllowCredentials(allowCredentials);
         configuration.setMaxAge(maxAge);
 

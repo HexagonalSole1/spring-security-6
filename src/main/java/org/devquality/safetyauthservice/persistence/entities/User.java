@@ -55,8 +55,6 @@ public class User {
     @Column(nullable = false)
     private UserRole role = UserRole.CITIZEN;
 
-    private Double lastLatitude;
-    private Double lastLongitude;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -65,13 +63,4 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL)
-    private List<CrimeReport> reports = new ArrayList<>();
-
-    // Relación con comentarios
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
-    private List<Notification> notificationsList = new ArrayList<>();
 }

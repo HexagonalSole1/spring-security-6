@@ -1,17 +1,158 @@
-
 spring:
   application:
     name: safety-auth-service
+  profiles:
+    active: dev
+
   datasource:
     url: jdbc:postgresql://localhost:5432/users
     username: Hexagonal
     password: HexagonalSole89
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+        use_sql_comments: true
+        generate_statistics: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    locations: classpath:db/migration
+
+# JWT Configuration
+jwt:
+  access-token-secret-key: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
+  access-token-expiration-in-ms: 86400000  # 24 hours
+  refresh-token-secret-key: "614E645267556B58703273357638792F423F4528482B4D6251655468566D5971"
+  refresh-token-expiration-in-ms: 604800000 # 7 days
+
+# CORS Configuration
+cors:
+  allowed-origins: "http://localhost:3000,http://localhost:4200,http://localhost:8080"
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework.security: INFO
+    org.devquality.safetyauthservice: DEBUG
+    org.flywaydb: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Application specific properties
+app:
+  security:
+    jwt:
+      header: Authorization
+      prefix: "Bearer "
+    cors:
+      allowed-origins: ${cors.allowed-origins}
+      allowed-methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS"
+      allowed-headers: "*"
+      exposed-headers: "Authorization"
+      allow-credentials: true
+      max-age: 3600
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.devquality.safetyauthservice: DEBUG
+
+---
+# Test Profile
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+jwt:
+  access-token-expiration-in-ms: 60000  # 1 minute for testing
+  refresh-token-expiration-in-ms: 120000 # 2 minutes for testing
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    org.springframework.security: WARN
+    org.devquality.safetyauthservice: INFO
+    org.springframework.web: WARN
+  file:
+    name: /var/log/safety-auth-service.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

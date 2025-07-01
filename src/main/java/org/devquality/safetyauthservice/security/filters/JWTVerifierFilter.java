@@ -6,13 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.devquality.safetyauthservice.security.service.UserDetailsServiceImpl;
 import org.devquality.safetyauthservice.types.JWTType;
 import org.devquality.safetyauthservice.utils.IJWTUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class JWTVerifierFilter extends OncePerRequestFilter {
 
     private final IJWTUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService; // Especifica la implementación exacta
 
     @Override
     protected void doFilterInternal(

@@ -136,7 +136,7 @@ public class AuthServiceImpl implements IAuthService {
             String newRefreshToken = jwtUtils.generateToken(email, null, JWTType.REFRESH_TOKEN);
 
             // Crear respuesta
-            RefreshTokenResponse refreshResponse = authMapper.toRefreshTokenResponse();
+            RefreshTokenResponse refreshResponse = new RefreshTokenResponse();
             refreshResponse.setAccessToken(accessToken);
             refreshResponse.setRefreshToken(newRefreshToken);
             refreshResponse.setExpiresIn(86400000L); // 24 hours - use constant or configuration

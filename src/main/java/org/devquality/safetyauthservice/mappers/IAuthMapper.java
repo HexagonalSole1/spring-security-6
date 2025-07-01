@@ -16,9 +16,10 @@ public interface IAuthMapper {
     @Mapping(target = "user", source = "user")
     AuthenticateResponse toAuthenticateResponse(User user);
 
-    @Mapping(target = "accessToken", ignore = true)
-    @Mapping(target = "refreshToken", ignore = true)
-    @Mapping(target = "tokenType", constant = "Bearer")
-    @Mapping(target = "expiresIn", ignore = true)
-    RefreshTokenResponse toRefreshTokenResponse();
+    // Método por defecto para crear RefreshTokenResponse
+    default RefreshTokenResponse toRefreshTokenResponse() {
+        RefreshTokenResponse response = new RefreshTokenResponse();
+        response.setTokenType("Bearer");
+        return response;
+    }
 }

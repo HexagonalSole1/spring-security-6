@@ -1,4 +1,4 @@
-package org.devquality.safetyauthservice.security.services;
+package org.devquality.safetyauthservice.security.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

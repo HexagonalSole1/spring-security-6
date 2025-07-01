@@ -1,9 +1,10 @@
-package org.devquality.safetyauthservice.config;
+package org.devquality.safetyauthservice.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.devquality.safetyauthservice.security.exceptions.ExceptionAccessDeniedHandlerImpl;
 import org.devquality.safetyauthservice.security.exceptions.ExceptionAuthenticationEntryPointImpl;
 import org.devquality.safetyauthservice.security.filters.JWTVerifierFilter;
+import org.devquality.safetyauthservice.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,7 +35,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JWTVerifierFilter jwtVerifierFilter;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService; // Especifica la implementación exacta
     private final ExceptionAccessDeniedHandlerImpl accessDeniedHandler;
     private final ExceptionAuthenticationEntryPointImpl authenticationEntryPoint;
 

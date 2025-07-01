@@ -3,6 +3,8 @@ package org.devquality.safetyauthservice.web.exceptions;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
+
 @Getter
 public class ValidationException extends RuntimeException {
     private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;

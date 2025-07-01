@@ -32,13 +32,6 @@ public class AuthServiceImpl implements IAuthService {
     private final IAuthMapper authMapper;
     private final IUserMapper userMapper;
 
-    public AuthServiceImpl(IUserService userService, IJWTUtils jwtUtils, PasswordEncoder passwordEncoder, IAuthMapper authMapper, IUserMapper userMapper) {
-        this.userService = userService;
-        this.jwtUtils = jwtUtils;
-        this.passwordEncoder = passwordEncoder;
-        this.authMapper = authMapper;
-        this.userMapper = userMapper;
-    }
 
     @Override
     public BaseResponse authenticate(AuthenticateRequest request) {

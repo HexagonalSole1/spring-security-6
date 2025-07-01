@@ -16,11 +16,6 @@ public interface IUserMapper {
     @Mapping(target = "verified", constant = "false")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "reports", ignore = true)
-    @Mapping(target = "comments", ignore = true)
-    @Mapping(target = "notificationsList", ignore = true)
-    @Mapping(target = "lastLatitude", ignore = true)
-    @Mapping(target = "lastLongitude", ignore = true)
     User toEntity(CreateUserRequest request);
 
     CreateUserResponse toCreateUserResponse(User user);

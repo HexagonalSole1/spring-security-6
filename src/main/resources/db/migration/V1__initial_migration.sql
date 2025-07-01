@@ -12,8 +12,6 @@ CREATE TABLE users (
                        active BOOLEAN NOT NULL DEFAULT true,
                        verified BOOLEAN NOT NULL DEFAULT false,
                        role VARCHAR(20) NOT NULL DEFAULT 'CITIZEN',
-                       last_latitude DECIMAL(10, 8),
-                       last_longitude DECIMAL(11, 8),
                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

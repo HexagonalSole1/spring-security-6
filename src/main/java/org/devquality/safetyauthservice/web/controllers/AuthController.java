@@ -1,10 +1,13 @@
 package org.devquality.safetyauthservice.web.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.devquality.safetyauthservice.services.IAuthService;
+import org.devquality.safetyauthservice.services.IUserService;
 import org.devquality.safetyauthservice.web.dtos.requests.AuthenticateRequest;
+import org.devquality.safetyauthservice.web.dtos.requests.CreateUserRequest;
 import org.devquality.safetyauthservice.web.dtos.requests.RefreshTokenRequest;
 import org.devquality.safetyauthservice.web.dtos.responses.BaseResponse;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,9 @@ public class AuthController {
 
     private final IAuthService authService;
 
+    private final IUserService userService;
+
+
     @PostMapping("/login")
     public ResponseEntity<BaseResponse> authenticate(@Valid @RequestBody AuthenticateRequest request) {
         log.info("🔐 Authentication request for: {}", request.getEmail());
@@ -36,7 +42,12 @@ public class AuthController {
         BaseResponse baseResponse = authService.refreshToken(request);
         return baseResponse.buildResponseEntity();
     }
-
+    @PostMapping("/register")
+    public ResponseEntity<BaseResponse> register(@Valid @RequestBody CreateUserRequest request) {
+        log.info("👤 User registration request: {}", request.getUsername());
+        BaseResponse baseResponse = userService.create(request);
+        return baseResponse.buildResponseEntity();
+    }
     @PostMapping("/logout")
     public ResponseEntity<BaseResponse> logout() {
         try {
@@ -127,4 +138,6 @@ public class AuthController {
 
         return response.buildResponseEntity();
     }
+
+
 }

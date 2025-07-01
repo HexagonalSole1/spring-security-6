@@ -1,9 +1,11 @@
 package org.devquality.safetyauthservice.web.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.devquality.safetyauthservice.persistence.entities.User;
 import org.devquality.safetyauthservice.persistence.repositories.IUserRepository;
+import org.devquality.safetyauthservice.web.dtos.requests.CreateUserRequest;
 import org.devquality.safetyauthservice.web.dtos.responses.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +67,7 @@ public class UserController {
             return response.buildResponseEntity();
         }
     }
+
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")

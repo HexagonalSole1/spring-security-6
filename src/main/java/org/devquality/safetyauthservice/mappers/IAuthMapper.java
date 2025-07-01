@@ -3,7 +3,6 @@ package org.devquality.safetyauthservice.mappers;
 import org.devquality.safetyauthservice.persistence.entities.User;
 import org.devquality.safetyauthservice.web.dtos.responses.AuthenticateResponse;
 import org.devquality.safetyauthservice.web.dtos.responses.RefreshTokenResponse;
-import org.devquality.safetyauthservice.web.dtos.responses.UserInfoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
